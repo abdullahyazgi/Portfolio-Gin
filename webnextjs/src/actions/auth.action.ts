@@ -3,6 +3,8 @@ import { SigninSchema, SignupSchema } from "@/lib/validationSchemas";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import * as bcrypt from "bcryptjs";
+import { signIn, signOut } from "@/auth";
+import { AuthError } from "next-auth";
 
 
 type signinDto = z.infer<typeof SigninSchema>;
@@ -12,11 +14,24 @@ type signupDto = z.infer<typeof SignupSchema>;
 export const signinAction = async (data: signinDto) => {
     const validation = SigninSchema.safeParse(data);
     if(!validation.success)
-      return { error: "Invalid credentials" };
+      return { success: false, message: "Invalid credentials" };
 
-    console.log(data);
+    const { email, password } = validation.data;
+    try {
+      await signIn("credentials", { email, password, redirectTo: "/dashboard" });
+    } catch (error) {
+      if(error instanceof AuthError) {
+        switch (error.type) {
+          case "CredentialsSignin":
+            return { success: false, message: "Invalid email or password" };
+          default:
+            return { success: false, message: "Failed to sign in" };
+        }
+      }
+      throw error;
+    }
 
-    return { success: "Signed in successfully" }
+    return { success: true, message: "Signed in successfully" }
 }
 
 // Signup Action
@@ -38,4 +53,9 @@ export const signupAction = async (data: signupDto) => {
     });
 
     return {  success: true, message: "Signed up successfully" }
+}
+
+// Signout
+export const signoutAction = async () => {
+  await signOut();
 }

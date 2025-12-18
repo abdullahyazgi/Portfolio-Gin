@@ -28,7 +28,10 @@ export const SignupForm = () => {
         setPassword("");
         setServerSuccess(result.message);
       }
-      if(!result.success) setServerError(result.message); 
+      if(!result.success) {
+        setServerSuccess("");
+        setServerError(result.message); 
+      }
     });
   }
 
