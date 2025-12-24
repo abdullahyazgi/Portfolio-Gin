@@ -54,6 +54,7 @@ export const signupAction = async (data: signupDto) => {
     });
     return { success: true, message: "Signed up successfully" };
   } catch (error) {
+    console.log(error);
     return { success: false, message: "Something went wrong" };
   }
 
