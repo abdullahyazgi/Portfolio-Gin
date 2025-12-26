@@ -1,4 +1,5 @@
 import { ModelsProject } from "@/api/api";
+import Link from "next/link";
 
 interface ProjectItemProps {
   project: ModelsProject;
@@ -11,6 +12,7 @@ const ProjectItem = ({ project }: ProjectItemProps) => {
       <p>
         {project.description}
       </p>
+      <Link href={`/myprojects/${project.id}`}>View Details</Link>
     </div>
   );
 };

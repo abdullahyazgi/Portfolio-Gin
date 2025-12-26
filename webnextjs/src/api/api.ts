@@ -235,5 +235,43 @@ export class Api<
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags Projects
+     * @name ProjectsDetail
+     * @summary Get a project by ID
+     * @request GET:/projects/{id}
+     */
+    projectsDetail: (id: number, params: RequestParams = {}) =>
+      this.request<ModelsProject, Record<string, string>>({
+        path: `/projects/${id}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Projects
+     * @name ProjectsUpdate
+     * @summary Update an existing project
+     * @request PUT:/projects/{id}
+     */
+    projectsUpdate: (
+      id: number,
+      project: ModelsProject,
+      params: RequestParams = {},
+    ) =>
+      this.request<ModelsProject, Record<string, string>>({
+        path: `/projects/${id}`,
+        method: "PUT",
+        body: project,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
   };
 }
