@@ -26,7 +26,11 @@ func main() {
 	cfg := config.LoadConfig()
 	pool := db.Connect(cfg)
 
-	r := gin.Default()
+	gin.SetMode(gin.ReleaseMode)
+
+	r := gin.New()
+	r.Use(gin.Logger(), gin.Recovery())
+	r.SetTrustedProxies(nil)
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"},

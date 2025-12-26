@@ -88,3 +88,88 @@ func (h *ProjectHandler) GetProjects(c *gin.Context) {
 
 	c.JSON(http.StatusOK, projects)
 }
+
+// Get Project by ID
+
+// GetProjectByID godoc
+// @Summary Get a project by ID
+// @Tags Projects
+// @Produce json
+// @Param id path int true "Project ID"
+// @Success 200 {object} models.Project
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /projects/{id} [get]
+func (h *ProjectHandler) GetProjectByID(c *gin.Context) {
+	id := c.Param("id")
+
+	query := `
+		SELECT id, title, description
+		FROM projects
+		WHERE id = $1
+	`
+
+	var project models.Project
+	err := h.DB.QueryRow(
+		context.Background(),
+		query,
+		id,
+	).Scan(&project.ID, &project.Title, &project.Description)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "project not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, project)
+}
+
+// Edit Project
+
+// UpdateProject godoc
+// @Summary Update an existing project
+// @Tags Projects
+// @Accept json
+// @Produce json
+// @Param id path int true "Project ID"
+// @Param project body models.Project true "Updated project payload"
+// @Success 200 {object} models.Project
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /projects/{id} [put]
+func (h *ProjectHandler) UpdateProject(c *gin.Context) {
+	var project models.Project
+
+	// Get project ID from URL
+	id := c.Param("id")
+
+	// Bind request body
+	if err := c.ShouldBindJSON(&project); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	query := `
+		UPDATE projects
+		SET title = $1,
+		    description = $2
+		WHERE id = $3
+		RETURNING id, title, description
+	`
+
+	err := h.DB.QueryRow(
+		context.Background(),
+		query,
+		project.Title,
+		project.Description,
+		id,
+	).Scan(&project.ID, &project.Title, &project.Description)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "project not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, project)
+}
