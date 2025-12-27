@@ -1,13 +1,14 @@
-import NavBar from './NavBar';
+// import NavBar from './NavBar';
 import Link from 'next/link';
 import { auth } from "@/auth";
 import { signoutAction } from '@/actions/auth.action';
 
 const Header = async () => {
   const session = await auth();
+  console.log(session)
   return (
     <header>
-      <NavBar />
+      {/* <NavBar role={session?.user?.role || false} /> */}
       <div>
         
         {session?.user ? (

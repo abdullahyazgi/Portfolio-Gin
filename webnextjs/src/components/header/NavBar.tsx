@@ -1,15 +1,18 @@
 "use client";
-
 import Link from "next/link";
 
-const NavBar = () => {
+interface NavbarProps {
+  role: boolean;
+}
+
+const NavBar = ({ role }: NavbarProps) => {
   return (
     <nav>
         <div>
             <ul>
                 <Link href="./">Home </Link>
                 <Link href="/myprojects">Projects </Link>
-                <Link href="/dashboard">Dashboard</Link>
+                {role && (<Link href="/dashboard">Dashboard</Link>)}
             </ul>
         </div>
     </nav>
