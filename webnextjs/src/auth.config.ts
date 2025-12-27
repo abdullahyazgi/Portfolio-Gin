@@ -1,11 +1,13 @@
 import type { NextAuthConfig } from "next-auth"
-import { prisma } from "./lib/prisma";
 import { SigninSchema } from "./lib/validationSchemas";
 import Credentials from "next-auth/providers/credentials";
 import * as bcrypt from "bcryptjs";
+import { prisma } from "./lib/prisma";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 
 
 export default {
+
   providers: [
     Credentials({
       async authorize(data) {
@@ -25,4 +27,29 @@ export default {
       }
     })
   ],
+    callbacks: {
+    async jwt({ token, account, user}) {
+      console.log(account)
+      console.log("33333333333333333333333333")
+      console.log(user)
+      if (user) {
+        token.id = user.id;
+        token.role = user.role
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user && token.sub) session.user.id = token.sub;
+      if (session.user && token.role) session.user.role = token.role;
+
+      return session;
+    }
+  },
+  adapter: PrismaAdapter(prisma),
+  session: {
+    strategy: "jwt"
+  },
+    pages: {
+    signIn: "/signin",
+  },
 } satisfies NextAuthConfig

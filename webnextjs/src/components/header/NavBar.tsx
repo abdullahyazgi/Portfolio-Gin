@@ -2,7 +2,7 @@
 import Link from "next/link";
 
 interface NavbarProps {
-  role: boolean;
+  role: string;
 }
 
 const NavBar = ({ role }: NavbarProps) => {
@@ -12,6 +12,7 @@ const NavBar = ({ role }: NavbarProps) => {
             <ul>
                 <Link href="./">Home </Link>
                 <Link href="/myprojects">Projects </Link>
+                <div>{role} </div>
                 {role && (<Link href="/dashboard">Dashboard</Link>)}
             </ul>
         </div>
