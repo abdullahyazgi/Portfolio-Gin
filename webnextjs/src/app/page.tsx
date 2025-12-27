@@ -7,8 +7,13 @@ export default function Home() {
     <section>
       <Hero />
       <div>
-        <p>Abdullah Yazji</p>
+        <div><h4>Projects</h4><p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p></div>
+        <div><h4>Skills</h4><p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p></div>
+        <div><h4>Roadmap</h4><p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p></div>
+        <div><h4>Contact</h4><p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p></div>
+
       </div>
+      <hr />
     </section>
   );
 }

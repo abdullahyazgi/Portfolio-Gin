@@ -18,7 +18,7 @@ export const signinAction = async (data: signinDto) => {
 
   const { email, password } = validation.data;
   try {
-    await signIn("credentials", { email, password, redirectTo: "/dashboard" });
+    await signIn("credentials", { email, password, redirectTo: "/" });
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
