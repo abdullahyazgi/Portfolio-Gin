@@ -2,11 +2,11 @@ import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 import authConfig from "./auth.config";
 
-const { auth } = NextAuth(authConfig);
+const { auth : proxy } = NextAuth(authConfig);
 
 const authRoutes = ["/signin", "/signup"];
 
-export default auth((req) => {
+export default proxy((req) => {
   const { nextUrl } = req;
   const path = nextUrl.pathname;
 
