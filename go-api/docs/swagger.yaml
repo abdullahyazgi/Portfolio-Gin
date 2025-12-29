@@ -1,5 +1,28 @@
 basePath: /api
 definitions:
+  dto.CreateProjectRequest:
+    properties:
+      description:
+        maxLength: 500
+        minLength: 5
+        type: string
+      title:
+        maxLength: 100
+        minLength: 3
+        type: string
+    required:
+    - description
+    - title
+    type: object
+  dto.UpdateProjectRequest:
+    properties:
+      description:
+        minLength: 5
+        type: string
+      title:
+        minLength: 3
+        type: string
+    type: object
   models.Project:
     properties:
       description:
@@ -47,12 +70,12 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Project payload
+      - description: Create project payload
         in: body
         name: project
         required: true
         schema:
-          $ref: '#/definitions/models.Project'
+          $ref: '#/definitions/dto.CreateProjectRequest'
       produces:
       - application/json
       responses:
@@ -119,7 +142,7 @@ paths:
         name: project
         required: true
         schema:
-          $ref: '#/definitions/models.Project'
+          $ref: '#/definitions/dto.UpdateProjectRequest'
       produces:
       - application/json
       responses:

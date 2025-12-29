@@ -58,12 +58,12 @@ const docTemplate = `{
                 "summary": "Create a new project",
                 "parameters": [
                     {
-                        "description": "Project payload",
+                        "description": "Create project payload",
                         "name": "project",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Project"
+                            "$ref": "#/definitions/dto.CreateProjectRequest"
                         }
                     }
                 ],
@@ -165,7 +165,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Project"
+                            "$ref": "#/definitions/dto.UpdateProjectRequest"
                         }
                     }
                 ],
@@ -208,6 +208,38 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CreateProjectRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 500,
+                    "minLength": 5
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3
+                }
+            }
+        },
+        "dto.UpdateProjectRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "minLength": 5
+                },
+                "title": {
+                    "type": "string",
+                    "minLength": 3
+                }
+            }
+        },
         "models.Project": {
             "type": "object",
             "required": [

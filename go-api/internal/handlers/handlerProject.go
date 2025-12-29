@@ -1,13 +1,14 @@
 package handlers
 
 import (
-	"context"
-	"net/http"
+	"api/internal/dto"
 	"api/internal/models"
 	"api/internal/utils"
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
-	
+	"net/http"
+	"strconv"
 )
 
 type ProjectHandler struct {
@@ -25,21 +26,26 @@ func NewProjectHandler(db *pgxpool.Pool) *ProjectHandler {
 // @Tags Projects
 // @Accept json
 // @Produce json
-// @Param project body models.Project true "Project payload"
+// @Param project body dto.CreateProjectRequest true "Create project payload"
 // @Success 201 {object} models.Project
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /projects [post]
 func (h *ProjectHandler) AddProject(c *gin.Context) {
-	var project models.Project
+	// var project models.Project
+	var req dto.CreateProjectRequest
 
-	if err := c.ShouldBindJSON(&project); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"errors": utils.ValidationError(err),
 		})
 		return
 	}
 
+	project := models.Project{
+		Title:       req.Title,
+		Description: req.Description,
+	}
 
 	query := `
 		INSERT INTO projects (title, description)
@@ -135,40 +141,60 @@ func (h *ProjectHandler) GetProjectByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "Project ID"
-// @Param project body models.Project true "Updated project payload"
+// @Param project body dto.UpdateProjectRequest true "Updated project payload"
 // @Success 200 {object} models.Project
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /projects/{id} [put]
 func (h *ProjectHandler) UpdateProject(c *gin.Context) {
-	var project models.Project
-
-	// Get project ID from URL
 	id := c.Param("id")
 
-	
-	if err := c.ShouldBindJSON(&project); err != nil {
+	var req dto.UpdateProjectRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"errors": utils.ValidationError(err),
 		})
 		return
 	}
 
-	query := `
-		UPDATE projects
-		SET title = $1,
-		    description = $2
-		WHERE id = $3
-		RETURNING id, title, description
-	`
+	// Ensure at least one field is provided
+	if req.Title == nil && req.Description == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "at least one field must be updated",
+		})
+		return
+	}
 
+	query := "UPDATE projects SET "
+	args := []any{}
+	argID := 1
+
+	if req.Title != nil {
+		query += "title = $" + strconv.Itoa(argID)
+		args = append(args, *req.Title)
+		argID++
+	}
+
+	if req.Description != nil {
+		if len(args) > 0 {
+			query += ", "
+		}
+		query += "description = $" + strconv.Itoa(argID)
+		args = append(args, *req.Description)
+		argID++
+	}
+
+	query += " WHERE id = $" + strconv.Itoa(argID)
+	args = append(args, id)
+
+	query += " RETURNING id, title, description"
+
+	var project models.Project
 	err := h.DB.QueryRow(
 		context.Background(),
 		query,
-		project.Title,
-		project.Description,
-		id,
+		args...,
 	).Scan(&project.ID, &project.Title, &project.Description)
 
 	if err != nil {

@@ -13,4 +13,3 @@ func ValidationError(err error) map[string]string {
 
 	return errors
 }
-
