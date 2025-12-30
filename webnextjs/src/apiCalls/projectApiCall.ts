@@ -4,12 +4,12 @@ import { ModelsProject } from "@/api/api";
 
 // GET All projects
 export const getProjects = async (): Promise<ModelsProject[]> => {
-  const res = await axios.get<ModelsProject[]>(`${DOMAIN}/api/projects`);
+  const res = await axios.get(`${DOMAIN}/api/projects`);
   return res.data;
 };
 
 // GET project by ID
 export const getProjectById = async (id: number): Promise<ModelsProject> => {
-  const res = await axios.get<ModelsProject>(`${DOMAIN}/api/projects/${id}`);
+  const res = await axios.get(`${DOMAIN}/api/projects/${id}`);
   return res.data;
 };

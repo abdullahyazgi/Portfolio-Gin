@@ -9,6 +9,7 @@ const AdminSidebar = () => {
         </Link>
         <ul>
             <li><Link href="/dashboard/add-project">add project</Link></li>
+            <li><Link href="/dashboard/projects-table">projects</Link></li>
         </ul>
     </>
   )
